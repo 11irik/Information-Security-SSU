@@ -1,0 +1,1 @@
+# SSU information security tasks
