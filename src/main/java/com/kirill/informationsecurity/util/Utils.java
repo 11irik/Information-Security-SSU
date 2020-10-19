@@ -1,4 +1,4 @@
-package com.kirill.information_security.util;
+package com.kirill.informationsecurity.util;
 
 import java.nio.charset.StandardCharsets;
 

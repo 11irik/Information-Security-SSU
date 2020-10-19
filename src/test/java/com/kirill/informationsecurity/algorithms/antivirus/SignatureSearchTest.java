@@ -1,4 +1,4 @@
-package com.kirill.information_security.algorithms.antivirus;
+package com.kirill.informationsecurity.algorithms.antivirus;
 
 import org.testng.annotations.Test;
 

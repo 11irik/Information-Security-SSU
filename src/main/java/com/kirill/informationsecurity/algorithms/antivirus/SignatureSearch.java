@@ -1,4 +1,4 @@
-package com.kirill.information_security.algorithms.antivirus;
+package com.kirill.informationsecurity.algorithms.antivirus;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;

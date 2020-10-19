@@ -1,5 +1,6 @@
-package com.kirill.information_security.algorithms.steno.one;
+package com.kirill.informationsecurity.algorithms.steno;
 
+import com.kirill.informationsecurity.algorithms.steno.Steno;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
