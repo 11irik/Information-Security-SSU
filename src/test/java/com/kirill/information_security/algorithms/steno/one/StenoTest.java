@@ -13,7 +13,7 @@ public class StenoTest {
 
     @Test
     public void readTest() throws IOException {
-        String word = Steno.decode("src/test/resources/steno/container.txt");
+        String word = Steno.decode("src/test/resources/steno/container.txt", "cp1251");
 
         System.out.println(word);
     }

@@ -17,12 +17,12 @@ public class Steno {
         RandomAccessFile container = new RandomAccessFile(containerPath, "rw");
         byte[] phrase = Files.readAllBytes(Paths.get(phrasePath));
 
-        List<Integer> phraseBits = getBitsFromPhrase(phrase);
+        String phraseBits = getBitsFromBytes(phrase);
         String line = null;
-        for (int i = 0; i < phrase.length * BYTE_LENGTH; ++i) {
+        for (char phraseBit : phraseBits.toCharArray()) {
             line = source.readLine();
 
-            if (phraseBits.get(i) == 1) {
+            if (phraseBit == '1') {
                 line += SYMBOL;
             }
             line += "\n";
@@ -35,18 +35,18 @@ public class Steno {
         }
     }
 
-    public static String decode(String containerPath) throws IOException {
+    public static String decode(String containerPath, String charset) throws IOException {
         RandomAccessFile container = new RandomAccessFile(containerPath, "rw");
-        List<Integer> bits = new ArrayList<>();
+        StringBuilder bits = new StringBuilder();
         String line = null;
 
         int maxNotSymbolCharsCount = BYTE_LENGTH;
         while ((line = container.readLine()) != null) {
             if (line.charAt(line.length() - 1) == SYMBOL) {
-                bits.add(1);
+                bits.append(1);
                 maxNotSymbolCharsCount = BYTE_LENGTH;
             } else {
-                bits.add(0);
+                bits.append(0);
                 maxNotSymbolCharsCount--;
             }
 
@@ -55,51 +55,57 @@ public class Steno {
             }
         }
 
-        int byteCount = bits.size() / BYTE_LENGTH;
-        Integer[] bitsArray = new Integer[byteCount * BYTE_LENGTH];
-        for (int i = 0; i < bitsArray.length; ++i) {
-            bitsArray[i] = bits.get(i);
-        }
-
-        return parseWord(bitsArray);
+        return new String(getBytesFromBits(bits.toString()), charset);
     }
 
-    private static List<Integer> getBitsFromByte(byte b) {
-        List<Integer> bits = new ArrayList<>();
-        for (int i = 0; i < BYTE_LENGTH; ++i) {
-            bits.add(((b >> i) & 1));
-        }
+    public static String getBitsFromByte(byte b) {
+        StringBuilder bits = new StringBuilder(Integer.toBinaryString(b & 0xFF));
 
-        return bits;
+        while (bits.length() < BYTE_LENGTH) {
+            bits.insert(0, '0');
+        }
+        bits.trimToSize();
+
+        return bits.toString();
     }
 
-    private static List<Integer> getBitsFromPhrase(byte[] phrase) {
-        List<Integer> phraseBits = new ArrayList<>();
+    public static String getBitsFromBytes(byte[] bytes) {
+        StringBuilder phraseBits = new StringBuilder();
 
-        for (byte b : phrase) {
-            phraseBits.addAll(getBitsFromByte(b));
+        for (byte b : bytes) {
+            phraseBits.append(getBitsFromByte(b));
         }
+        phraseBits.trimToSize();
 
-        return phraseBits;
+        return phraseBits.toString();
     }
 
-    private static String parseWord(Integer[] bits) {
-        StringBuffer word = new StringBuffer();
+    public static byte getByteFromBits(String bits) {
+        if (bits.length() != BYTE_LENGTH) {
+            //TODO: Add normal exception
+            throw new RuntimeException();
+        }
 
-        StringBuffer charBits = new StringBuffer();
-        int count = 0;
-        for (Integer bit : bits) {
-            charBits.append(bit);
+        return (byte)Integer.parseInt(bits, 2);
+    }
 
-            if (++count == BYTE_LENGTH) {
-                byte charByte = Byte.parseByte(String.valueOf(charBits.reverse()), 2);
-                word.append((char) charByte);
+    public static byte[] getBytesFromBits(String bits) {
+        List<Byte> byteList = new ArrayList<>();
+        StringBuilder stringBuilder = new StringBuilder();
 
-                count = 0;
-                charBits = new StringBuffer();
+        for (int i = 1; i <= bits.length(); ++i) {
+            stringBuilder.append(bits.charAt(i-1));
+
+            if (i % BYTE_LENGTH == 0) {
+                stringBuilder.trimToSize();
+                byteList.add(Steno.getByteFromBits(stringBuilder.toString()));
+                stringBuilder = new StringBuilder();
             }
         }
 
-        return String.valueOf(word);
+        byte[] byteArray = new byte[byteList.size()];
+        for(int i = 0; i < byteList.size(); i++) byteArray[i] = byteList.get(i);
+
+        return byteArray;
     }
 }
