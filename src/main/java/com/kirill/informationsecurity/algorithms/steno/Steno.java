@@ -2,8 +2,11 @@ package com.kirill.informationsecurity.algorithms.steno;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import static com.kirill.informationsecurity.algorithms.steno.BinaryConverter.getBitsFromBytes;
 import static com.kirill.informationsecurity.algorithms.steno.BinaryConverter.getBytesFromBits;
@@ -12,37 +15,37 @@ public class Steno {
     private static final char SYMBOL = ' ';
     private static final int BYTE_LENGTH = 8;
 
-    public static void encode(String sourcePath, String phrasePath, String containerPath) throws IOException {
+    public static void encode(Path source, Path phrase, Path dest, Charset charset) throws IOException {
 
-        RandomAccessFile source = new RandomAccessFile(sourcePath, "r");
-        RandomAccessFile container = new RandomAccessFile(containerPath, "rw");
-        byte[] phrase = Files.readAllBytes(Paths.get(phrasePath));
+        Stream<String> sourceLines = Files.lines(source, charset);
+        byte[] phraseBytes = Files.readAllBytes(phrase);
 
-        String phraseBits = getBitsFromBytes(phrase);
-        String line = null;
-        for (char phraseBit : phraseBits.toCharArray()) {
-            line = source.readLine();
-
-            if (phraseBit == '1') {
-                line += SYMBOL;
-            }
-            line += "\n";
-
-            container.writeBytes(line);
-        }
-
-        while ((line = source.readLine()) != null) {
-            container.writeBytes(line + '\n');
-        }
+        Files.write(dest, appendSymbols(sourceLines, getBitsFromBytes(phraseBytes).toCharArray(), SYMBOL).getBytes(charset));
     }
 
-    public static String decode(String containerPath, String charset) throws IOException {
-        RandomAccessFile container = new RandomAccessFile(containerPath, "rw");
+    public static String appendSymbols(Stream<String> lines, char[] bits, char symbol) {
+        StringBuilder stringBuilder = new StringBuilder();
+        AtomicInteger i = new AtomicInteger();
+
+        lines.forEach(line -> {
+            stringBuilder.append(line);
+            if (i.get() < bits.length && bits[i.getAndIncrement()] == '1') {
+                stringBuilder.append(symbol);
+            }
+            stringBuilder.append('\n');
+        });
+
+        return stringBuilder.toString();
+    }
+
+    public static String decode(Path file, Charset charset) throws IOException {
+        RandomAccessFile raf = new RandomAccessFile(String.valueOf(file), "rw");
+
         StringBuilder bits = new StringBuilder();
         String line = null;
-
         int maxNotSymbolCharsCount = BYTE_LENGTH;
-        while ((line = container.readLine()) != null) {
+
+        while ((line = raf.readLine()) != null) {
             if (line.charAt(line.length() - 1) == SYMBOL) {
                 bits.append('1');
                 maxNotSymbolCharsCount = BYTE_LENGTH;
@@ -55,6 +58,7 @@ public class Steno {
                 break;
             }
         }
+        bits.setLength(bits.length() - bits.length() % 8);
 
         return new String(getBytesFromBits(bits.toString()), charset);
     }

@@ -20,6 +20,8 @@ public class StenoSecond {
 
         String phraseBits = getBitsFromBytes(phrase);
 
+
+
     }
 
     public static String decode(String containerPath, String charset) throws IOException {
