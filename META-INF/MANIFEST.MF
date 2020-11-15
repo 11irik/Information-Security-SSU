@@ -1,1 +1,1 @@
-Main-Class: com.kirill.informationsecurity.gui.text.CryptoGUI
+Main-Class: com.kirill.informationsecurity.gui.cat.CatGUI

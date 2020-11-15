@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -90,8 +91,10 @@ public class CatGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Crypto.encryptCatalog(Paths.get(textEncodePath.getText()), textEncodeKey.getText(), Paths.get(textEncodeTargetPath.getText()));
+                    deleteDirectory(Paths.get(textEncodePath.getText()).toFile());
                     encodeStatusLabel.setText("Success");
                 } catch (IOException | IllegalArgumentException exception) {
+                    exception.printStackTrace();
                     encodeStatusLabel.setText("Failure");
                 }
             }
@@ -133,8 +136,10 @@ public class CatGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Crypto.decryptCatalog(Paths.get(textDecodePath.getText()), textDecodeKey.getText(), Paths.get(textDecodeDirPath.getText()));
+                    Files.delete(Paths.get(textDecodePath.getText()));
                     decodeStatusLabel.setText("Success");
                 } catch (IOException | IllegalArgumentException exception) {
+                    exception.printStackTrace();
                     decodeStatusLabel.setText("Failure");
                 }
             }
@@ -143,5 +148,15 @@ public class CatGUI extends JFrame {
 
     public static void main(String[] args) {
         new CatGUI();
+    }
+
+    boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
     }
 }

@@ -25,25 +25,23 @@ public class CryptoGUI extends JFrame {
         setContentPane(rootPanel);
         setVisible(true);
 
-//        TODO: work with it
-        int firstChar = 0;
-        int alphabetCount = 1200;
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         encodeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    String enc = Crypto.encrypt(textEncodeInput.getText(), textEncodeKey.getText(), firstChar, alphabetCount);
+                    String enc = Crypto.encrypt(textEncodeInput.getText(), textEncodeKey.getText());
                     textEncodeOutput.setText(enc);
                 } catch (Exception ignored) {
                 }
             }
         });
+
         buttonDecode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    String decode = Crypto.decrypt(textDecodeInput.getText(), textDecodeKey.getText(), firstChar, alphabetCount);
+                    String decode = Crypto.decrypt(textDecodeInput.getText(), textDecodeKey.getText());
                     textDecodeOutput.setText(decode);
                 } catch (Exception ignored) {
                 }
