@@ -1,6 +1,6 @@
 package com.kirill.informationsecurity.gui.text;
 
-import com.kirill.informationsecurity.algorithms.crypto.CryptoString;
+import com.kirill.informationsecurity.algorithms.crypto.Crypto;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -32,14 +32,14 @@ public class CryptoGUI extends JFrame {
         encodeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String enc = CryptoString.encode(textEncodeInput.getText(), textEncodeKey.getText(), firstChar, alphabetCount);
+                String enc = Crypto.encrypt(textEncodeInput.getText(), textEncodeKey.getText(), firstChar, alphabetCount);
                 textEncodeOutput.setText(enc);
             }
         });
         buttonDecode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String decode = CryptoString.decode(textDecodeInput.getText(), textDecodeKey.getText(), firstChar, alphabetCount);
+                String decode = Crypto.decrypt(textDecodeInput.getText(), textDecodeKey.getText(), firstChar, alphabetCount);
                 textDecodeOutput.setText(decode);
             }
         });

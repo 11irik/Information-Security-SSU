@@ -1,6 +1,6 @@
 package com.kirill.informationsecurity.gui.cat;
 
-import com.kirill.informationsecurity.algorithms.crypto.CryptoString;
+import com.kirill.informationsecurity.algorithms.crypto.Crypto;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -30,7 +30,7 @@ public class CatGUI extends JFrame {
     Path tempFile = Paths.get("./temp");
 
     public CatGUI() {
-        setSize(400, 200);
+        setSize(600, 200);
         setContentPane(rootPanel);
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -53,7 +53,10 @@ public class CatGUI extends JFrame {
         encodeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CryptoString.encodeCatalog(Paths.get(textEncodePath.getText()), textEncodeKey.getText(), tempFile);
+                try {
+                    Crypto.encryptCatalog(Paths.get(textEncodePath.getText()), textEncodeKey.getText(), tempFile);
+                } catch (Exception ignored) {
+                }
             }
         });
 
@@ -75,7 +78,10 @@ public class CatGUI extends JFrame {
         buttonDecode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CryptoString.decodeCatalog(Paths.get(textDecodePath.getText()), textDecodeKey.getText());
+                try {
+                    Crypto.decryptCatalog(Paths.get(textDecodePath.getText()), textDecodeKey.getText());
+                } catch (Exception ignored) {
+                }
             }
         });
 
