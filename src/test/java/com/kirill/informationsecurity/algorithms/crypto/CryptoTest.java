@@ -14,22 +14,20 @@ public class CryptoTest {
 
         String text = "Арбуз";
         String key = "Ключ";
-        int firstChar = (int) '!';
-        int alphabetCount = 1070;
 
-        String enc = Crypto.encrypt(text, key, firstChar, alphabetCount);
-        String dec = Crypto.decrypt(enc, key, firstChar, alphabetCount);
+        String enc = Crypto.encrypt(text, key);
+        String dec = Crypto.decrypt(enc, key);
         Assert.assertEquals(dec, text);
     }
 
     @Test
     public void cryptoTestTwo() throws IOException {
         String key = "Ключ";
-        Path p = Paths.get("/Users/klukashin/IdeaProjects/university/Information-Security-SSU/./src/test/resources/antivirus/dir");
-        Path tempFile = Paths.get("./temp.kl");
-        Path targetDir = Paths.get("./testDir");
+        Path dirPath = Paths.get("./src/test/resources/crypto/dir").toAbsolutePath();
+        Path tempFile = Paths.get("./src/test/resources/crypto/temp.kl").toAbsolutePath();
+        Path targetDir = Paths.get("./src/test/resources/crypto/testDir").toAbsolutePath();
 
-        Crypto.encryptCatalog(p, key, tempFile);
+        Crypto.encryptCatalog(dirPath, key, tempFile);
         Crypto.decryptCatalog(tempFile, key, targetDir);
     }
 
