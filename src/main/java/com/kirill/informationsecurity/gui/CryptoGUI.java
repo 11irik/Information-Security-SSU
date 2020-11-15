@@ -21,8 +21,8 @@ public class CryptoGUI extends JFrame {
     private JButton buttonDecode;
 
     public CryptoGUI() {
-        setContentPane(rootPanel);
         setSize(400, 200);
+        setContentPane(rootPanel);
         setVisible(true);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
