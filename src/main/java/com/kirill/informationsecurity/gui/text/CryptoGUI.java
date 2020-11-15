@@ -32,15 +32,21 @@ public class CryptoGUI extends JFrame {
         encodeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String enc = Crypto.encrypt(textEncodeInput.getText(), textEncodeKey.getText(), firstChar, alphabetCount);
-                textEncodeOutput.setText(enc);
+                try {
+                    String enc = Crypto.encrypt(textEncodeInput.getText(), textEncodeKey.getText(), firstChar, alphabetCount);
+                    textEncodeOutput.setText(enc);
+                } catch (Exception ignored) {
+                }
             }
         });
         buttonDecode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String decode = Crypto.decrypt(textDecodeInput.getText(), textDecodeKey.getText(), firstChar, alphabetCount);
-                textDecodeOutput.setText(decode);
+                try {
+                    String decode = Crypto.decrypt(textDecodeInput.getText(), textDecodeKey.getText(), firstChar, alphabetCount);
+                    textDecodeOutput.setText(decode);
+                } catch (Exception ignored) {
+                }
             }
         });
     }

@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collections;
+import java.util.MissingFormatArgumentException;
 
 public class Crypto {
     private static final int firstChar = 0;
@@ -16,7 +17,10 @@ public class Crypto {
 
     public static String encrypt(String text, String key, int offset, int count) {
         String encrypt = "";
-        final int keyLen = key.length();
+        int keyLen = key.length();
+        if (keyLen == 0) {
+            throw new IllegalArgumentException("Key size should be 1 or more");
+        }
         for (int i = 0, len = text.length(); i < len; i++) {
             encrypt += (char) (((text.charAt(i) + key.charAt(i % keyLen) - 2 * offset) % count) + offset);
         }
@@ -25,7 +29,10 @@ public class Crypto {
 
     public static String decrypt(String text, String key, int offset, int count) {
         String decrypt = "";
-        final int keyLen = key.length();
+        int keyLen = key.length();
+        if (keyLen == 0) {
+            throw new IllegalArgumentException("Key size should be 1 or more");
+        }
         for (int i = 0, len = text.length(); i < len; i++) {
             decrypt += (char) (((text.charAt(i) - key.charAt(i % keyLen) + count) % count) + offset);
         }
@@ -34,6 +41,7 @@ public class Crypto {
 
     public static void encryptCatalog(Path catalog, String key, Path output) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(key).append('\n');
         Files.walk(catalog)
                 .filter(Files::isDirectory)
                 .forEach(f -> {
@@ -61,25 +69,29 @@ public class Crypto {
         Files.write(output, Collections.singleton(paths));
     }
 
-    public static void decryptCatalog(Path tmpPath, String key) throws IOException {
-        String str = new String(Files.readAllBytes(tmpPath), StandardCharsets.UTF_8);
+    public static void decryptCatalog(Path encryptedFile, String key, Path targetDir) throws IOException {
+        String str = new String(Files.readAllBytes(encryptedFile), StandardCharsets.UTF_8);
         str = decrypt(str, key, firstChar, alphabetCount);
-
-
         String[] arr = str.split(filespacer);
 
-        for (String s1 : arr[0].split("\n")) {
-            Files.createDirectories(Paths.get("./dirsTest", s1));
+        String[] keyAndDirs = arr[0].split("\\R", 2);
+        String fileKey = keyAndDirs[0];
+        String dirs = keyAndDirs[1];
+
+        if (!fileKey.equals(key)) {
+            throw new IllegalArgumentException("Key is not correct");
+        }
+
+        for (String s1 : dirs.split("\n")) {
+            Files.createDirectories(Paths.get(String.valueOf(targetDir), s1));
         }
 
         for (String s1 : arr[1].split(spacer)) {
-            System.out.println(s1);
-
             String[] file = s1.split("\\R", 2);
             if (file.length > 1) {
                 String filePath = file[0];
                 String text = file[1];
-                Path f = Paths.get("./dirsTest", filePath);
+                Path f = Paths.get(String.valueOf(targetDir), filePath);
                 Files.write(f, (text).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             }
         }
