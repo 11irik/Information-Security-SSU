@@ -17,19 +17,33 @@ public class StenoEndSpaceTest {
 
 
     @Test
-    public void writeTest() throws IOException {
-        final String key = "ру";
+    public void keks() throws IOException {
 
-        String enc = CryptoString.encode("русский", key, 1072, 33);
+        String text = "Арбуз";
+        String key = "Ключ";
+        int firstChar = (int)'А';
+        int alphabetCount = 66;
+
+        String enc = CryptoString.encode(text, key, firstChar, alphabetCount);
         System.out.println(enc);
-        String dec = CryptoString.decode(enc, key, 1072, 33);
+
+        String dec = CryptoString.decode(enc, key, firstChar, alphabetCount);
         System.out.println(dec);
+
     }
 
     @Test
-    public void readTest() throws IOException {
-        String word = StenoEndSpace.decode(dest, charset);
+    public void writeTest() throws IOException {
 
-        System.out.println(word);
+        int a = 'А';
+        for (int i = 1; i < 100; ++i) {
+            System.out.print((char)a);
+            System.out.print(' ');
+            if (i % 20 == 0) {
+                System.out.println();
+            }
+            a++;
+        }
+
     }
 }
