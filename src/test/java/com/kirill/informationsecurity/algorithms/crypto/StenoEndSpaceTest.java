@@ -21,8 +21,8 @@ public class StenoEndSpaceTest {
 
         String text = "Арбуз";
         String key = "Ключ";
-        int firstChar = (int)'А';
-        int alphabetCount = 66;
+        int firstChar = (int)'!';
+        int alphabetCount = 1070;
 
         String enc = CryptoString.encode(text, key, firstChar, alphabetCount);
         System.out.println(enc);
@@ -35,15 +35,25 @@ public class StenoEndSpaceTest {
     @Test
     public void writeTest() throws IOException {
 
-        int a = 'А';
-        for (int i = 1; i < 100; ++i) {
+        int a = 0;
+        int j = 0;
+        for (int i = 0; i < 10000; ++i) {
             System.out.print((char)a);
             System.out.print(' ');
             if (i % 20 == 0) {
                 System.out.println();
             }
+            if (a == '!') {
+                System.out.println("FIRST CHAR IS: " + a);
+                j = a;
+            }
+            if (a == 'я') {
+                System.out.println("LAST IS:" + a);
+                break;
+            }
             a++;
         }
 
+        System.out.println(Character.toString((char) (j+3)));
     }
 }

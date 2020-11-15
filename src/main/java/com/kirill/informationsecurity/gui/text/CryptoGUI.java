@@ -1,4 +1,4 @@
-package com.kirill.informationsecurity.gui;
+package com.kirill.informationsecurity.gui.text;
 
 import com.kirill.informationsecurity.algorithms.crypto.CryptoString;
 
@@ -25,8 +25,9 @@ public class CryptoGUI extends JFrame {
         setContentPane(rootPanel);
         setVisible(true);
 
-        int firstChar = (int)'А';
-        int alphabetCount = 66;
+//        TODO: work with it
+        int firstChar = 0;
+        int alphabetCount = 1200;
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         encodeButton.addActionListener(new ActionListener() {
             @Override
